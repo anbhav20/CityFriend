@@ -1,0 +1,178 @@
+import MainLayout from "../components/MainLayout";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+
+const Search = () => {
+
+  const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("all"); // all | city
+
+  const getUsers = async () => {
+
+    try {
+
+      setLoading(true);
+
+      let url = "http://localhost:5000/api/users";
+
+      if (filter === "city") {
+        url = "http://localhost:5000/api/users/city";
+      }
+
+      const res = await axios.get(url, {
+        withCredentials: true
+      });
+
+      setUsers(res.data.users);
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, [filter]);
+
+  const filteredUsers = users.filter((user) =>
+    user.username.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <MainLayout>
+
+      <main className="ml-64 px-10 py-10 bg-gray-50 min-h-screen">
+
+        {/* Header */}
+
+        <div className="mb-6">
+
+          <h1 className="text-2xl font-semibold text-gray-900">
+            Find Friends
+          </h1>
+
+          <p className="text-sm text-gray-500 mt-1">
+            Discover and connect with people around you
+          </p>
+
+        </div>
+
+
+        {/* Search */}
+
+        <div className="mb-4">
+
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full max-w-xl py-2 px-4 outline outline-gray-300 rounded-lg"
+            type="text"
+            placeholder="Search users..."
+          />
+
+        </div>
+
+
+        {/* Filters */}
+
+        <div className="flex gap-3 mb-6">
+
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-4 py-1.5 rounded-full text-sm border transition
+              ${filter === "all"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "border-gray-300 text-gray-600"}
+            `}
+          >
+            All Users
+          </button>
+
+          <button
+            onClick={() => setFilter("city")}
+            className={`px-4 py-1.5 rounded-full text-sm border transition
+              ${filter === "city"
+                ? "bg-blue-500 text-white border-blue-500"
+                : "border-gray-300 text-gray-600"}
+            `}
+          >
+            Same City
+          </button>
+
+        </div>
+
+
+        {/* Loading */}
+
+        {loading && (
+          <p className="text-gray-500 text-sm">Loading users...</p>
+        )}
+
+
+        {/* Users */}
+
+        <div className="max-w-2xl space-y-4">
+
+          {filteredUsers.map((user) => (
+
+            <div
+              key={user._id}
+              className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all"
+            >
+
+              <Link
+                to={`/${user.username}`}
+                className="flex items-center gap-4"
+              >
+
+                <img
+                  src={user.profilePic || "/default-avatar.png"}
+                  alt="pfp"
+                  className="h-14 w-14 rounded-full object-cover"
+                />
+
+                <div>
+
+                  <h2 className="text-sm font-semibold text-gray-900">
+                    {user.username}
+                  </h2>
+
+                  <p className="text-xs text-gray-500">
+                    {user.city || "Unknown location"}
+                  </p>
+
+                </div>
+
+              </Link>
+
+              <button
+                className="px-5 py-1.5 text-sm font-medium rounded-full border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition"
+              >
+                Follow
+              </button>
+
+            </div>
+
+          ))}
+
+          {!loading && filteredUsers.length === 0 && (
+            <p className="text-sm text-gray-500">
+              User Not found.
+            </p>
+          )}
+
+        </div>
+
+      </main>
+
+    </MainLayout>
+  );
+};
+
+export default Search;

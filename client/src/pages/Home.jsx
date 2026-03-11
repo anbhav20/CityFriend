@@ -110,6 +110,7 @@ const Home = () => {
               onChange={(e) => setFile(e.target.files[0])}
               className="w-full text-sm border border-gray-300 rounded-lg p-2 file:mr-3 file:py-1 file:px-3 file:border-0 file:text-sm file:rounded-lg file:bg-gray-200 file:cursor-pointer"
             />
+
             <button
               onClick={uploadPost}
               disabled={uploading}
@@ -117,11 +118,16 @@ const Home = () => {
             >
               {uploading ? "Posting..." : "Post"}
             </button>
+
           </div>
+
         </div>
 
+
         {/* Posts Feed */}
+
         <div className="max-w-2xl space-y-8">
+
           {loading ? (
             <>
               <SkeletonPost />

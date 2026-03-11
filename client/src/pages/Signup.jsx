@@ -68,9 +68,9 @@ const Signup = () => {
       <div className="min-h-screen w-full flex justify-center items-center bg-gray-50">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 w-80 lg:w-[420px] rounded-2xl shadow-md flex flex-col gap-3"
+          className="bg-white p-8 w-80 lg:w-[420px] rounded-2xl shadow-md flex flex-col gap-6"
         >
-          <div className="mb-4">
+          <div className="mb-6">
             <Navleft />
           </div>
 

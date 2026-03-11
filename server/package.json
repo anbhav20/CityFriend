@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npx nodemon server.js",
-    "test": "jest"
+    "build": "npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "anbhav",

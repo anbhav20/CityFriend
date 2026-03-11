@@ -1,11 +1,36 @@
-import Navleft from './Navleft'
-import Navright from './Navright'
+import { useState } from "react";
+import Navleft from "./Navleft";
+import Navright from "./Navright";
 
-    export const Header = () => {
-    return (
-        <div className='lg:px-6 lg:py-5 h-15 flex justify-between items-center border-gray-200 shadow-md'>
-            <Navleft/>
-            <Navright/>
+export const Header = () => {
+
+  const [open, setOpen] = useState(false);
+
+  return (
+    <header className="px-4 lg:px-6 py-4 flex items-center justify-between border-b border-gray-200 shadow-sm bg-white">
+
+      <Navleft />
+
+      {/* Desktop nav */}
+      <div className="hidden lg:block">
+        <Navright />
+      </div>
+
+      {/* Hamburger button */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="lg:hidden text-2xl"
+      >
+        ☰
+      </button>
+
+      {/* Mobile menu */}
+      {open && (
+        <div className="absolute top-16 right-4 bg-white border border-gray-200 rounded-xl shadow-lg p-5 lg:hidden">
+          <Navright mobile />
         </div>
-    )
-    }
+      )}
+
+    </header>
+  );
+};

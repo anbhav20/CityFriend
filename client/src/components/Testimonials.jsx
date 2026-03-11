@@ -1,20 +1,21 @@
-import UserCards from "./UserCards";
+import UserCard from "./UserCard";
+
 const testimonials = [
   {
-    avtar:"https://plus.unsplash.com/premium_photo-1664015982598-283bcdc9cae8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bWVufGVufDB8fDB8fHww",
-    name: "Aman Verma",
+    profilePic:"https://plus.unsplash.com/premium_photo-1664015982598-283bcdc9cae8?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8bWVufGVufDB8fDB8fHww",
+    username: "Aman Verma",
     city: "Noida",
     text: "I met some really genuine people from my city. The UI is clean and chatting feels instant.",
   },
   {
-    avtar:"https://images.unsplash.com/photo-1692579406317-36d761b3ac39?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVvcGxlJTIwY2hhdHRpbmclMjBpbiUyMHBob25lfGVufDB8fDB8fHww",
-    name: "Priya Sharma",
+    profilePic:"https://images.unsplash.com/photo-1692579406317-36d761b3ac39?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVvcGxlJTIwY2hhdHRpbmclMjBpbiUyMHBob25lfGVufDB8fDB8fHww",
+    username: "Priya Sharma",
     city: "Delhi",
     text: "Very simple to use and no unnecessary steps. Perfect for making new friends nearby.",
   },
   {
-    avtar:"../../public/user1avatar.avif",
-    name: "Rohit Singh",
+    profilePic:"/user1avatar.avif",
+    username: "Rohit Singh",
     city: "Gurgaon",
     text: "Loved the idea of city-based connections. Feels safe and modern.",
   },
@@ -37,19 +38,26 @@ const Testimonials = () => {
 
         {/* Cards */}
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-          {testimonials.map((item, index) => (
+
+          {testimonials.map((user, index) => (
+
             <div
               key={index}
-              className="
-              bg-white p-6 sm:p-8
-              rounded-3xl
-              shadow-sm hover:shadow-lg
-              transition
-              "
+              className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm hover:shadow-lg transition"
             >
-              <UserCards  item={item}/>
+
+              {/* User info */}
+              <UserCard user={user} />
+
+              {/* Testimonial text */}
+              <p className="mt-4 text-sm text-gray-600 leading-relaxed">
+                {user.text}
+              </p>
+
             </div>
+
           ))}
+
         </div>
 
       </div>

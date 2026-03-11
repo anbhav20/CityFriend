@@ -110,7 +110,6 @@ const Home = () => {
               onChange={(e) => setFile(e.target.files[0])}
               className="w-full text-sm border border-gray-300 rounded-lg p-2 file:mr-3 file:py-1 file:px-3 file:border-0 file:text-sm file:rounded-lg file:bg-gray-200 file:cursor-pointer"
             />
-
             <button
               onClick={uploadPost}
               disabled={uploading}
@@ -118,18 +117,12 @@ const Home = () => {
             >
               {uploading ? "Posting..." : "Post"}
             </button>
-
           </div>
-
         </div>
 
-
         {/* Posts Feed */}
-
         <div className="max-w-2xl space-y-8">
-
           {loading ? (
-
             <>
               <SkeletonPost />
               <SkeletonPost />
@@ -138,66 +131,17 @@ const Home = () => {
               <SkeletonPost />
               <SkeletonPost />
             </>
-
           ) : posts.length === 0 ? (
 
             <div className="text-center py-10 bg-white rounded-2xl border border-gray-200">
-
               <p className="text-gray-500 text-sm">
                 No posts yet. Be the first to post something.
               </p>
-
             </div>
 
           ) : (
-
-            posts.map((post) => (
-
-              <div
-                key={post._id}
-                className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
-              >
-
-                {/* User Header */}
-
-                <div className="flex items-center gap-3 p-4">
-
-                  <img
-                    src={post.user?.profilePic || "/default-avatar.png"}
-                    alt="pfp"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-
-                  <div>
-                    <h3 className="text-sm font-semibold text-gray-900">
-                      {post.user?.username}
-                    </h3>
-
-                    <p className="text-xs text-gray-500">
-                      {post.user?.city || "Unknown"}
-                    </p>
-                  </div>
-
-                </div>
-
-                {/* Post Image */}
-
-                <img
-                  src={post.image}
-                  alt="post"
-                  className="w-full object-cover max-h-[500px]"
-                />
-
-                {/* Caption */}
-
-                <div className="p-4">
-                  <p className="text-sm text-gray-700">
-                    {post.caption || ""}
-                  </p>
-                </div>
-
-              </div>
-
+             posts.map((post) => (
+              <PostCard key={post._id} post={post} />
             ))
 
           )}

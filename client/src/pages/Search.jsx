@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import UserSkeleton from "../components/UserSkeleton";
+import UserCard from "../components/UserCard";
 
 const Search = () => {
 
@@ -137,46 +138,8 @@ const Search = () => {
           ) : (
 
             filteredUsers.map((user) => (
-
-              <div
-                key={user._id}
-                className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all"
-              >
-
-                <Link
-                  to={`/${user.username}`}
-                  className="flex items-center gap-4"
-                >
-
-                  <img
-                    src={user.profilePic || "/default-avatar.png"}
-                    alt="pfp"
-                    className="h-14 w-14 rounded-full object-cover"
-                  />
-
-                  <div>
-
-                    <h2 className="text-sm font-semibold text-gray-900">
-                      {user.username}
-                    </h2>
-
-                    <p className="text-xs text-gray-500">
-                      {user.city || "Unknown location"}
-                    </p>
-
-                  </div>
-
-                </Link>
-
-                <button
-                  className="px-5 py-1.5 text-sm font-medium rounded-full border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition"
-                >
-                  Follow
-                </button>
-
-              </div>
-
-            ))
+            <UserCard key={user._id} user={user} />
+          ))
 
           )}
 

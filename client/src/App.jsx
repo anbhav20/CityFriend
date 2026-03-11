@@ -38,7 +38,7 @@ const App = () => {
       <Route path='/search' element={<Search/>}/>
       <Route path='/chats' element={<Chats/>}/>
       <Route path='/settings' element={<Settings/>}/>
-      <Route path='/profile' element={<Profile/>}/>
+      <Route path='/:username' element={<Profile/>}/>
       <Route path='/notifications' element={<Notifications/>}/>
       <Route path="/about" element={<About />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />

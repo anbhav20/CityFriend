@@ -43,7 +43,6 @@ const HomeLeftNav = () => {
       <div className="mb-10">
         <Navleft />
       </div>
-
       
       <nav className="flex flex-col gap-5 text-[15px]">
 
@@ -88,9 +87,9 @@ const HomeLeftNav = () => {
         </Link>
 
         <Link
-          to="/profile"
+          to="/:username"
           className={`${navItem} ${
-            location.pathname === "/profile" && activeNav
+            location.pathname === "/:username" && activeNav
           }`}
         >
           <FiUser size={18} />

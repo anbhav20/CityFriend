@@ -1,23 +1,34 @@
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
-const Navright = () => {
+const Navright = ({ mobile = false }) => {
   return (
-     <div id="right"
-                className='flex tetx-xs lg:gap-10 gap-1 lg:text-md font-semibold'>
-                {/* <Link  to='/home'
-                className='cursor-pointer hover:text-blue-500 active:text-blue-600 transition'>
-                Home</Link> */}
-                <Link to='/features'
-                 className='cursor-pointer hover:scale-110 '>
-                Features</Link>
-                <Link to='/community'
-                 className='cursor-pointer hover:scale-110 '>
-                Community</Link>
-                <Link to='/login'
-                 className='cursor-pointer hover:scale-110 bg-gray-200 rounded-2xl lg:py-1 lg:px-5'>
-                Sign-in</Link>
-            </div>
-  )
-}
+    <div
+      className={`flex flex-col lg:flex-row gap-4 lg:gap-8 text-sm font-semibold ${
+        mobile ? "items-start" : "items-center"
+      }`}
+    >
+      <Link
+        to="/features"
+        className="hover:text-blue-500 transition"
+      >
+        Features
+      </Link>
 
-export default Navright
+      <Link
+        to="/community"
+        className="hover:text-blue-500 transition"
+      >
+        Community
+      </Link>
+
+      <Link
+        to="/login"
+        className="bg-gray-200 rounded-full px-4 py-1 hover:bg-gray-300 transition"
+      >
+        Sign-in
+      </Link>
+    </div>
+  );
+};
+
+export default Navright;

@@ -23,7 +23,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api', UserRoute)
 app.use('/api/posts', postRoute)
 
-app.get('/:path(*)', (req, res)=>{
+app.get('*', (req, res)=>{
   res.sendFile(path.join(__dirname, "../public/index.html"))
 })
 

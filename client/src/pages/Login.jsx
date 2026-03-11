@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navleft from "../components/Navleft";
 import useForm from "../hooks/useForm";
 import axios from "axios";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const { form, handleChange } = useForm({
@@ -16,36 +16,39 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // const toastId = toast.loading("Logging in...");
+    const toastId = toast.loading("Please wait.");
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        "https://cityfriend.onrender.com/api/auth/login",
         {
           identifier: form.identifier,
           password: form.password
-        }, {
-          withCredentials:true
+        },
+        {
+          withCredentials: true
         }
       );
-      // toast.update(toastId, {
-      //   render: res.data.message || "Login successful!",
-      //   type: "success",
-      //   isLoading: false,
-      //   autoClose: 3000
-      // });
-      alert(res.data.message || "Login successful!");
+
+      toast.update(toastId, {
+        render: res.data.message || "Login successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000
+      });
+
       navigate("/home");
 
     } catch (error) {
-      // toast.update(toastId, {
-      //   render:
+      const message =
+        error.response?.data?.message || "Something went wrong";
 
-        // type: "error",
-        // isLoading: false,
-        // autoClose: 3000
-      // });
-      alert(error.response?.data?.message||"something went wrong");
+      toast.update(toastId, {
+        render: message,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000
+      });
     }
   };
 
@@ -66,7 +69,7 @@ const Login = () => {
             name="identifier"
             value={form.identifier}
             onChange={handleChange}
-            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-400"
             type="text"
             placeholder="Email or Username"
             required
@@ -76,7 +79,7 @@ const Login = () => {
             name="password"
             value={form.password}
             onChange={handleChange}
-            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-400"
             type="password"
             placeholder="Password"
             required

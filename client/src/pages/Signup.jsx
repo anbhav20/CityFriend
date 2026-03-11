@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navleft from "../components/Navleft";
 import useForm from "../hooks/useForm";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const { form, handleChange } = useForm({
@@ -18,41 +19,58 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Password validation 
+    // Password validation
     if (form.password !== form.confirmpassword) {
-      alert("Passwords do not match!");
+      toast.error("Passwords do not match!");
       return;
     }
 
+    const toastId = toast.loading("Please wait.");
+
     try {
-      // send only required fields like confirm password mt bhjo
       const res = await axios.post(
-        "http://localhost:5000/api/auth/signup",
+        "https://cityfriend.onrender.com/signup",
         {
           username: form.username,
           email: form.email,
           city: form.city,
           password: form.password
-        }, {withCredentials:true}
+        },
+        { withCredentials: true }
       );
 
-      alert(res.data.message||"Signup successful!");
+      toast.update(toastId, {
+        render: res.data.message || "Signup successful!",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000
+      });
+
       navigate("/home");
 
     } catch (error) {
-      alert( error.response?.data?.message || "Something went wrong!");
+      const message =
+        error.response?.data?.message || "Something went wrong!";
+
+      toast.update(toastId, {
+        render: message,
+        type: "error",
+        isLoading: false,
+        autoClose: 3000
+      });
     }
   };
 
   return (
     <>
       <Backbtn />
-      <div className="h-120 w-full flex justify-center items-center">
+
+      <div className="min-h-screen w-full flex justify-center items-center bg-gray-50">
         <form
           onSubmit={handleSubmit}
-          className="mt-5 p-2 w-80 lg:w-140 gap-5 flex flex-col"
+          className="bg-white p-8 w-80 lg:w-[420px] rounded-2xl shadow-md flex flex-col gap-3"
         >
-          <div className="mb-10">
+          <div className="mb-4">
             <Navleft />
           </div>
 
@@ -60,7 +78,7 @@ const Signup = () => {
             name="username"
             onChange={handleChange}
             required
-            className="py-2 px-10 rounded-lg border outline-none"
+            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-400"
             type="text"
             placeholder="Create Username"
           />
@@ -69,7 +87,7 @@ const Signup = () => {
             name="email"
             onChange={handleChange}
             required
-            className="py-2 px-10 rounded-lg border outline-none"
+            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-400"
             type="email"
             placeholder="E-mail"
           />
@@ -77,7 +95,7 @@ const Signup = () => {
           <input
             name="city"
             onChange={handleChange}
-            className="py-2 px-10 rounded-lg border outline-none"
+            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-400"
             type="text"
             placeholder="City"
           />
@@ -86,7 +104,7 @@ const Signup = () => {
             name="password"
             onChange={handleChange}
             required
-            className="py-2 px-10 rounded-lg border outline-none"
+            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-400"
             type="password"
             placeholder="Password"
           />
@@ -95,18 +113,20 @@ const Signup = () => {
             name="confirmpassword"
             onChange={handleChange}
             required
-            className="py-2 px-10 rounded-lg border outline-none"
+            className="py-2 px-4 rounded-lg border focus:outline-none focus:ring-1 focus:ring-blue-400"
             type="password"
             placeholder="Confirm Password"
           />
 
-          <button className="mt-5 py-2 px-10 text-white bg-blue-500 rounded-2xl">
+          <button className="mt-4 py-2 text-white bg-blue-500 hover:bg-blue-600 rounded-xl transition">
             Sign Up
           </button>
 
-          <div>
-            <span>Already have an account?</span>{" "}
-            <Link className="text-blue-500" to="/login">
+          <div className="text-sm text-center">
+            <span className="text-gray-600">
+              Already have an account?
+            </span>{" "}
+            <Link className="text-blue-500 font-medium" to="/login">
               Login
             </Link>
           </div>

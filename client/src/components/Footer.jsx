@@ -143,7 +143,7 @@ const Footer = () => {
         >
           © {new Date().getFullYear()} CityFriend. All rights reserved.  
           <span className="block sm:inline">
-            {" "}Made with ❤️ by Anbhav's Team
+            {" "}Made with ❤️ by Anbhav.
           </span>
         </div>
 

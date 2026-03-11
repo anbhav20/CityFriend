@@ -2,13 +2,15 @@ import MainLayout from "../components/MainLayout";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import UserSkeleton from "../components/UserSkeleton";
 
 const Search = () => {
 
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState("all"); // all | city
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all");
 
   const getUsers = async () => {
 
@@ -16,20 +18,24 @@ const Search = () => {
 
       setLoading(true);
 
-      let url = "http://localhost:5000/api/users";
+      let url = "https://cityfriend.onrender.com/api/users";
 
       if (filter === "city") {
-        url = "http://localhost:5000/api/users/city";
+        url = "https://cityfriend.onrender.com/city";
       }
 
       const res = await axios.get(url, {
         withCredentials: true
       });
 
-      setUsers(res.data.users);
+      setUsers(res.data.users || []);
 
     } catch (error) {
-      console.error(error);
+
+      toast.error(
+        error.response?.data?.message || "Failed to load users"
+      );
+
     } finally {
       setLoading(false);
     }
@@ -45,6 +51,7 @@ const Search = () => {
   );
 
   return (
+
     <MainLayout>
 
       <main className="ml-64 px-10 py-10 bg-gray-50 min-h-screen">
@@ -108,63 +115,69 @@ const Search = () => {
         </div>
 
 
-        {/* Loading */}
-
-        {loading && (
-          <p className="text-gray-500 text-sm">Loading users...</p>
-        )}
-
-
         {/* Users */}
 
         <div className="max-w-2xl space-y-4">
 
-          {filteredUsers.map((user) => (
+          {loading ? (
 
-            <div
-              key={user._id}
-              className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all"
-            >
+            <>
+              <UserSkeleton />
+              <UserSkeleton />
+              <UserSkeleton />
+              <UserSkeleton />
+            </>
 
-              <Link
-                to={`/${user.username}`}
-                className="flex items-center gap-4"
-              >
+          ) : filteredUsers.length === 0 ? (
 
-                <img
-                  src={user.profilePic || "/default-avatar.png"}
-                  alt="pfp"
-                  className="h-14 w-14 rounded-full object-cover"
-                />
-
-                <div>
-
-                  <h2 className="text-sm font-semibold text-gray-900">
-                    {user.username}
-                  </h2>
-
-                  <p className="text-xs text-gray-500">
-                    {user.city || "Unknown location"}
-                  </p>
-
-                </div>
-
-              </Link>
-
-              <button
-                className="px-5 py-1.5 text-sm font-medium rounded-full border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition"
-              >
-                Follow
-              </button>
-
-            </div>
-
-          ))}
-
-          {!loading && filteredUsers.length === 0 && (
             <p className="text-sm text-gray-500">
-              User Not found.
+              User not found.
             </p>
+
+          ) : (
+
+            filteredUsers.map((user) => (
+
+              <div
+                key={user._id}
+                className="flex items-center justify-between bg-white px-5 py-4 rounded-2xl shadow-sm hover:shadow-md transition-all"
+              >
+
+                <Link
+                  to={`/${user.username}`}
+                  className="flex items-center gap-4"
+                >
+
+                  <img
+                    src={user.profilePic || "/default-avatar.png"}
+                    alt="pfp"
+                    className="h-14 w-14 rounded-full object-cover"
+                  />
+
+                  <div>
+
+                    <h2 className="text-sm font-semibold text-gray-900">
+                      {user.username}
+                    </h2>
+
+                    <p className="text-xs text-gray-500">
+                      {user.city || "Unknown location"}
+                    </p>
+
+                  </div>
+
+                </Link>
+
+                <button
+                  className="px-5 py-1.5 text-sm font-medium rounded-full border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition"
+                >
+                  Follow
+                </button>
+
+              </div>
+
+            ))
+
           )}
 
         </div>
@@ -172,6 +185,7 @@ const Search = () => {
       </main>
 
     </MainLayout>
+
   );
 };
 

@@ -1,23 +1,35 @@
 import axios from "axios";
 import MainLayout from "../components/MainLayout";
+import SkeletonPost from "../components/SkeletonPost";
 import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const Home = () => {
 
   const [posts, setPosts] = useState([]);
   const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
 
   const getPosts = async () => {
+
     try {
+
       const res = await axios.get(
-        "http://localhost:5000/api/posts/feed",
+        "https://cityfriend.onrender.com/api/posts/feed",
         { withCredentials: true }
       );
 
-      setPosts(res.data.posts);
+      setPosts(res.data.posts || []);
 
     } catch (error) {
-      console.error(error);
+
+      toast.error(
+        error.response?.data?.message || "Failed to load posts"
+      );
+
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -27,15 +39,21 @@ const Home = () => {
 
   const uploadPost = async () => {
 
-    if (!file) return alert("Select an image");
+    if (!file) {
+      return toast.warning("Please select an image");
+    }
+
+    const toastId = toast.loading("Uploading post...");
 
     try {
+
+      setUploading(true);
 
       const formData = new FormData();
       formData.append("image", file);
 
       await axios.post(
-        "http://localhost:5000/api/posts/upload",
+        "https://cityfriend.onrender.com/api/posts/upload",
         formData,
         {
           withCredentials: true,
@@ -45,13 +63,30 @@ const Home = () => {
         }
       );
 
+      toast.update(toastId, {
+        render: "Post uploaded successfully 🚀",
+        type: "success",
+        isLoading: false,
+        autoClose: 3000
+      });
+
       setFile(null);
       getPosts();
 
     } catch (error) {
-      console.error(error);
-    }
 
+      toast.update(toastId, {
+        render:
+          error.response?.data?.message ||
+          "Upload failed. Try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000
+      });
+
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -78,9 +113,10 @@ const Home = () => {
 
             <button
               onClick={uploadPost}
-              className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition cursor-pointer"
+              disabled={uploading}
+              className="px-5 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition cursor-pointer disabled:opacity-60"
             >
-              Post
+              {uploading ? "Posting..." : "Post"}
             </button>
 
           </div>
@@ -92,64 +128,77 @@ const Home = () => {
 
         <div className="max-w-2xl space-y-8">
 
-          {posts.map((post) => (
+          {loading ? (
 
-            <div
-              key={post._id}
-              className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
-            >
+            <>
+              <SkeletonPost />
+              <SkeletonPost />
+              <SkeletonPost />
+              <SkeletonPost />
+              <SkeletonPost />
+              <SkeletonPost />
+            </>
 
-              {/* User Header */}
+          ) : posts.length === 0 ? (
 
-              <div className="flex items-center gap-3 p-4">
+            <div className="text-center py-10 bg-white rounded-2xl border border-gray-200">
+
+              <p className="text-gray-500 text-sm">
+                No posts yet. Be the first to post something.
+              </p>
+
+            </div>
+
+          ) : (
+
+            posts.map((post) => (
+
+              <div
+                key={post._id}
+                className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
+              >
+
+                {/* User Header */}
+
+                <div className="flex items-center gap-3 p-4">
+
+                  <img
+                    src={post.user?.profilePic || "/default-avatar.png"}
+                    alt="pfp"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900">
+                      {post.user?.username}
+                    </h3>
+
+                    <p className="text-xs text-gray-500">
+                      {post.user?.city || "Unknown"}
+                    </p>
+                  </div>
+
+                </div>
+
+                {/* Post Image */}
 
                 <img
-                  src={post.user?.profilePic || "/default-avatar.png"}
-                  alt="pfp"
-                  className="w-10 h-10 rounded-full object-cover"
+                  src={post.image}
+                  alt="post"
+                  className="w-full object-cover max-h-[500px]"
                 />
 
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    {post.user?.username}
-                  </h3>
+                {/* Caption */}
 
-                  <p className="text-xs text-gray-500">
-                    {post.user?.city || "Unknown"}
+                <div className="p-4">
+                  <p className="text-sm text-gray-700">
+                    {post.caption || ""}
                   </p>
                 </div>
 
               </div>
 
-              {/* Post Image */}
-
-              <img
-                src={post.image}
-                alt="post"
-                className="w-full object-cover max-h-[500px]"
-              />
-
-              {/* Caption */}
-
-              <div className="p-4">
-                <p className="text-sm text-gray-700">
-                  {post.caption || ""}
-                </p>
-              </div>
-
-            </div>
-
-          ))}
-
-          {posts.length === 0 && (
-
-            <div className="text-center py-10 bg-white rounded-2xl border border-gray-200">
-
-              <p className="text-gray-500 text-sm">
-                No posts yet. Be the first to post something 🚀
-              </p>
-
-            </div>
+            ))
 
           )}
 

@@ -4,7 +4,7 @@ const Notifications = () => {
   return (
     <MainLayout>
       <main className='flex-1 min-h-screen'>
-        <div className='flex h-full justify-center items-center'>
+        <div className='flex justify-center items-center min-h-screen'>
         <MVP child={"Notifications"}/>
       </div>
       </main>

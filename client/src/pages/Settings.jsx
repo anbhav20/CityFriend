@@ -6,7 +6,7 @@ const Settings = () => {
     <MainLayout>
 
        <main className='flex-1 min-h-screen'>
-        <div className='flex h-full justify-center items-center'>
+        <div className='flex h-full justify-center items-center min-h-screen'>
        <div> <MVP child={"settings"}/>
        <p> (App settings)  uh! dumb!!</p></div>
       </div>

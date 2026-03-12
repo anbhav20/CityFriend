@@ -6,7 +6,7 @@ const Chats = () => {
   return (
     <MainLayout>
       <main className="flex flex-1 min-h-screen bg-gray-100  items-center justify-center">
-        <section className="flex-1 ">
+        <section className="flex-1  flex items-center justify-center min-h-screen">
           <div className="text-center px-4">
             <div className="mx-auto mb-4 h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center">
               <span className="text-4xl text-gray-500">💬</span>

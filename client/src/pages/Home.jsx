@@ -3,6 +3,7 @@ import MainLayout from "../components/MainLayout";
 import SkeletonPost from "../components/SkeletonPost";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import PostCard from "../components/PostCard"
 
 const Home = () => {
 

@@ -1,0 +1,79 @@
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// ── Route guards ──
+import { ProtectedRoute }  from "./routes/ProtectedRoute";
+import { PublicOnlyRoute } from "./routes/PublicOnlyRoute";
+
+// ── Auth pages ──
+import Login  from "./features/auth/pages/Login";
+import Signup from "./features/auth/pages/Signup";
+
+// ── Protected pages ──
+import Home          from "./features/post/pages/Home";
+import Profile       from "./features/user/pages/Profile";
+import Search        from "./features/user/pages/Explore";
+import EditProfile   from "./features/user/pages/EditProfile";
+import Notifications from "./pages/Notifications";
+import Chats         from "./pages/Chats";
+import Settings      from "./pages/Settings";
+
+// ── Open public pages ──
+import Landing       from "./pages/Landing";
+import About         from "./components/About";
+import PrivacyPolicy from "./components/PrivacyPolicy";
+import Terms         from "./components/Terms";
+import NotFound      from "./pages/NotFound";
+
+const App = () => {
+  return (
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="light"
+      />
+
+      <BrowserRouter>
+        <Routes>
+
+          {/* ── Open — anyone can visit ── */}
+          <Route path="/"               element={<Landing />} />
+          <Route path="/about"          element={<About />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms"          element={<Terms />} />
+
+          {/* ── Auth only — logged-in users bounce to /home ── */}
+          <Route element={<PublicOnlyRoute />}>
+            <Route path="/login"  element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+          </Route>
+
+          {/* ── Protected — guests bounce to /login ── */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/home"          element={<Home />} />
+            <Route path="/search"        element={<Search />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/chats"         element={<Chats />} />
+            <Route path="/settings"      element={<Settings />} />
+            <Route path="/edit-profile"  element={<EditProfile />} />
+            {/* ✅ /:username must be last — wildcard swallows everything above it */}
+            <Route path="/:username"     element={<Profile />} />
+          </Route>
+
+          {/* ── Fallback ── */}
+          <Route path="*" element={<NotFound />} />
+
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
+};
+
+export default App;

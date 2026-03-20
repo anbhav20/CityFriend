@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
   withCredentials: true,
-  timeout: 8000,
+  timeout: 10000,
 });
 
 // ✅ these routes never show toasts or trigger redirects
@@ -19,7 +19,7 @@ api.interceptors.response.use(
       response.config.url?.includes(route)
     );
     if (!isSilent && response.data?.message) {
-      toast.success(response.data.message, { autoClose: 2500 });
+      toast.success(response.data.message, { autoClose: 2000 });
     }
     return response;
   },
@@ -37,7 +37,7 @@ api.interceptors.response.use(
     }
 
     if (!error.response) {
-      toast.error("Network error. Check your connection.");
+      toast.error("Network error.Check your connection.");
       return Promise.reject(error);
     }
 

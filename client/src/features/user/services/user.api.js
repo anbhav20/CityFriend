@@ -1,4 +1,4 @@
-import { api } from "../../api"; // ✅ shared instance — no local axios.create
+import { api } from "../../api";
 
 export const getAllUsers        = () => api.get("/users").then(r => r.data);
 export const getUserSameCity   = () => api.get("/users/city").then(r => r.data);

@@ -34,7 +34,7 @@ exports.getUserProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // ✅ Check if the logged-in user already follows this profile
+    // Check if the logged-in user already follows this profile
     let isFollowing = false;
     if (req.user?.id) {
       isFollowing = !!(await Follow.exists({
@@ -45,7 +45,7 @@ exports.getUserProfile = async (req, res) => {
 
     res.status(200).json({
       user,
-      isFollowing   // ✅ send it alongside user
+      isFollowing   //send it alongside user
     });
 
   } catch (error) {
@@ -219,7 +219,7 @@ exports.editProfile = async (req, res) => {
   const { name, username, bio, city, college } = req.body;
 
   try {
-    // ✅ check if username is taken by someone else before updating
+    // check if username is taken by someone else before updating
     if (username) {
       const existing = await UserModel.findOne({
         username: username.toLowerCase().trim(),
@@ -238,7 +238,7 @@ exports.editProfile = async (req, res) => {
       ...(college  && { college:  college.trim()                 }),
     };
 
-    // ✅ upload profile pic if provided
+    // upload profile pic if provided
     if (req.file) {
       const imageUrl = await uploadToImagekit(req.file);
       updateData.profilePic = imageUrl;
@@ -255,7 +255,7 @@ exports.editProfile = async (req, res) => {
     return res.status(200).json({ message: "Profile updated successfully.", user: updatedUser });
 
   } catch (err) {
-    // ✅ catch duplicate key (race condition between checkUsername and editProfile)
+    // catch duplicate key (race condition between checkUsername and editProfile)
     if (err.code === 11000) {
       const field = Object.keys(err.keyPattern)[0];
       return res.status(409).json({ message: `${field} is already taken.` });
@@ -265,7 +265,7 @@ exports.editProfile = async (req, res) => {
   }
 };
 
-// ✅ GET /api/users/check-username/:username
+// GET /api/users/check-username/:username
 exports.checkUsername = async (req, res) => {
   try {
     const username = req.params.username?.toLowerCase().trim();
@@ -284,7 +284,7 @@ exports.checkUsername = async (req, res) => {
     return res.json({ available: !existing });
 
   } catch (err) {
-    // ✅ temporarily log the actual error so you can see what's crashing
+    // temporarily log the actual error so you can see what's crashing
     console.error("checkUsername error:", err.message);
     return res.status(500).json({ available: false, message: "Server error." });
   }

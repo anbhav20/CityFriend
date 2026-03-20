@@ -29,17 +29,17 @@ import NotFound      from "./pages/NotFound";
 const App = () => {
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
+     <ToastContainer
+        position="top-center"
+        autoClose={2000}
+        hideProgressBar
         newestOnTop
         closeOnClick
-        pauseOnHover
-        draggable
+        pauseOnHover={false}
+        draggable={false}
         theme="light"
+        toastClassName="!text-sm !min-h-0 !py-2 !px-3 !rounded-lg !w-fit !max-w-[280px] !mx-auto"
       />
-
       <BrowserRouter>
         <Routes>
 

@@ -15,7 +15,7 @@ const UserCard = ({ user }) => {
       {/* User Info */}
         <Link
         to={openProfile}
-        className="flex items-center gap-2.5 sm:gap-2 min-w-0"
+        className="flex items-center gap-3 sm:gap-4 min-w-0"
         >
         <img
           src={user.profilePic || "/default-avatar.png"}
@@ -29,23 +29,13 @@ const UserCard = ({ user }) => {
           </h2>
 
           <div className="flex gap-2 lg:gap-4">
-  {/* ✅ fix 1: font-italic and text-italic don't exist in Tailwind — use italic */}
-  <p className="italic text-[11px] sm:text-xs text-gray-500 truncate">
-    {user.city || "Unknown location"}
-  </p>
-
-  {/* ✅ fix 2: college renders an empty string " " when falsy — hides it entirely instead */}
-  {user.college && (
-    <p className="italic text-[11px] sm:text-xs text-gray-500 truncate">
-      {user.college}
-    </p>
-  )}
-</div>
+            <p className="italic text-[11px] sm:text-xs text-gray-500 truncate">
+              {user.city || "Unknown location"}
+            </p>
+           
+          </div>
         </div>
         </Link>
-
-
-      {/* Follow Button */}
 
       <button
         onClick={(e) => e.stopPropagation()&& openProfile}

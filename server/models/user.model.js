@@ -27,9 +27,9 @@ const UserSchema = new mongoose.Schema({
   required: true,
   select:false
   },
-  city: {
-    type: String,
-    required: true
+ city: {
+      type: String,
+      default: 'Unknown'  // ← remove required, add default
   },
   bio:{
     type:String,

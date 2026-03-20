@@ -20,23 +20,26 @@ exports.signup = async (req, res) => {
             }
         }
 
-        // Auto-detect city from IP
+        // Render sets x-forwarded-for but sometimes has multiple IPs
+        // Also Render's own internal IPs start with 10. which you're skipping!
         const ip =
             req.headers['x-forwarded-for']?.split(',')[0].trim() ||
+            req.headers['x-real-ip'] ||
             req.socket.remoteAddress;
 
         let city = 'Unknown';
 
+        // ✅ updated — only skip true localhost, NOT 10.x (Render passes real user IP in x-forwarded-for)
         const isLocalIP =
             ip === '::1' ||
             ip === '127.0.0.1' ||
-            ip?.startsWith('192.168.') ||
-            ip?.startsWith('10.');
+            ip === '::ffff:127.0.0.1';
 
-        if (!isLocalIP) {
+         if (!isLocalIP) {
             try {
                 const geoRes = await fetch(`https://ipwho.is/${ip}`);
                 const geoData = await geoRes.json();
+                console.log('GeoIP result:', ip, geoData); // ← add this to debug
                 if (geoData.success && geoData.city) {
                     city = geoData.city;
                 }
@@ -44,7 +47,6 @@ exports.signup = async (req, res) => {
                 console.warn('GeoIP lookup failed:', geoErr.message);
             }
         }
-
         const hashedPassword = await bcrypt.hash(password, 12);
         const user = await UserModel.create({
             username, email, city, password: hashedPassword

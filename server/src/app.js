@@ -13,24 +13,25 @@ const allowedOrigins = [
   process.env.CLIENT_URL
 ];
 
+console.log("✅ Allowed origins:", allowedOrigins); 
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
+      console.log(" Blocked by CORS:", origin); 
       return callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true
 }));
 
-// ✅ Other middlewares AFTER cors
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ Routes
 app.use('/api/auth',  authRoutes);
 app.use('/api',       UserRoute);
 app.use('/api/posts', postRoute);

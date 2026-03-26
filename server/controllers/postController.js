@@ -1,5 +1,7 @@
 const PostModel = require("../models/post.model");
 const {uploadToImagekit} = require("../utils/imageKit")
+const { attachIsLiked, attachIsCommented } = require("./likeController");
+
 
 exports.uploadImage = async (req, res) => {
 
@@ -36,43 +38,50 @@ exports.uploadImage = async (req, res) => {
 
 };
 
-exports.getAllPosts = async (req, res)=>{
-    try {
-        const posts = await PostModel.find().populate("user", "username city  profilePic")
-        if(!posts){
-            return res.status(404).json({
-                message:"No posts found!"
-            })
-        }
-        res.status(200).json({
-            posts
-        })
-    } catch (error) {
-        res.status(500).json({
-            error:error.message || "Something went wrong!"
-        })
-    }
-}
+exports.getAllPosts = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    let posts = await PostModel.find()
+      .populate("user", "username city profilePic")
+      .lean(); 
+
+    posts = await attachIsLiked(posts, userId);
+    posts = await attachIsCommented(posts, userId);
+
+    res.status(200).json({
+      posts
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "Something went wrong!"
+    });
+  }
+};
 
 
-exports.getUsersAllpost = async(req, res)=>{
-    try {
-        const posts = await PostModel.find({userId:req.user.id}).populate("user", "username  profilePic")
-        if(!posts){
-            return res.status(404).json({
-                message:"No posts found!"
-            })
-        }
-        res.status(200).json({
-            posts
-        })
-        
-    } catch (error) {
-        res.status(500).json({
-           error: error.message || "internal server error!"
-        })
-    }
-}
+exports.getUsersAllpost = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+
+    let posts = await PostModel.find({ user: userId }) 
+      .populate("user", "username profilePic")
+      .lean();
+
+    posts = await attachIsLiked(posts, userId);
+    posts = await attachIsCommented(posts, userId);
+
+    res.status(200).json({
+      posts
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      error: error.message || "internal server error!"
+    });
+  }
+};
 
 exports.editProfile = async (req, res) => {
 

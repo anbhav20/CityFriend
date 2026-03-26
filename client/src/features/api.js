@@ -76,8 +76,17 @@ api.interceptors.response.use(
     } else if (status === 403) {
       toast.error("You don't have permission to do that.");
     } else if (status === 404) {
-      if (!isAuthRoute) toast.error("Resource not found.");
-      else toast.error(message);
+      // ❌ notifications pe UI error nahi chahiye
+      if (url.includes("/notifications")) {
+        console.error("404 (notifications):", message);
+        return Promise.reject(error);
+      }
+
+      if (!isAuthRoute) {
+        toast.error("Resource not found.");
+      } else {
+        toast.error(message);
+      }
     } else if (status >= 500) {
       toast.error("Server error. Please try again later.");
     } else {

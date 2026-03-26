@@ -105,6 +105,8 @@ const ProfileInfo = ({
             isFollowing={isFollowing}
             onFollow={onFollow}
             onUnfollow={onUnfollow}
+            userId={user._id}
+            username={user.username}
           />
         )}
       </div>

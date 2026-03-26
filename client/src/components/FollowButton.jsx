@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-const FollowButton = ({ isFollowing, onFollow, onUnfollow }) => {
+const FollowButton = ({ isFollowing, onFollow, onUnfollow, userId,username }) => {
   const navigate = useNavigate();
 
   if (isFollowing) {
@@ -13,7 +13,7 @@ const FollowButton = ({ isFollowing, onFollow, onUnfollow }) => {
           Following
         </button>
         <button
-          onClick={() => navigate("/chats")}
+          onClick={() => navigate(`/chats?userId=${userId}&username=${username}`)}
           className="flex-1 whitespace-nowrap px-4 py-1 sm:py-1.5 rounded-lg text-xs lg:text-sm font-semibold bg-gray-200 hover:bg-gray-300 transition"
         >
           Message

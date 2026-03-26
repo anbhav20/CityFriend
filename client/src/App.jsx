@@ -6,7 +6,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { ProtectedRoute }  from "./routes/ProtectedRoute";
 import { PublicOnlyRoute } from "./routes/PublicOnlyRoute";
 
-// ── Auth pages ──
+import { usePushNotification } from "./features/notifications/hooks/usePushNotification";
+
+// ── Auth pages ──a
 import Login  from "./features/auth/pages/Login";
 import Signup from "./features/auth/pages/Signup";
 
@@ -15,8 +17,8 @@ import Home          from "./features/post/pages/Home";
 import Profile       from "./features/user/pages/Profile";
 import Search        from "./features/user/pages/Explore";
 import EditProfile   from "./features/user/pages/EditProfile";
-import Notifications from "./pages/Notifications";
-import Chats         from "./pages/Chats";
+import Notifications from "./features/notifications/pages/NotificatonsPage";
+import Chats         from "./features/messages/pages/Chats";
 import Settings      from "./pages/Settings";
 
 // ── Open public pages ──
@@ -27,6 +29,7 @@ import Terms         from "./components/Terms";
 import NotFound      from "./pages/NotFound";
 
 const App = () => {
+  usePushNotification(); 
   return (
     <>
      <ToastContainer

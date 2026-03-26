@@ -3,6 +3,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FiHome, FiSearch, FiMessageCircle, FiBell, FiSettings, FiLogOut } from "react-icons/fi";
 import Navleft from "./Navleft";
 import { useAuth } from "../features/auth/hooks/useAuth";
+import { useChatCounts } from "../features/messages/hooks/useChatCounts";
+import { useNotifications } from "../features/notifications/hooks/useNotifications";
 import UserMiniCard from "./UserMiniCard";
 
 const NAV_LINKS = [
@@ -15,6 +17,9 @@ const NAV_LINKS = [
 
 const Sidebar = memo(() => {
   const { user, LogOut } = useAuth();
+  const { totalUnread } = useChatCounts();        // ✅ chats count
+  const { unreadCount } = useNotifications();     // ✅ notifications count
+
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -26,9 +31,7 @@ const Sidebar = memo(() => {
     try {
       await LogOut();
       navigate("/");
-    } catch {
-      // interceptor toast already shown
-    }
+    } catch {}
   }, [LogOut, navigate]);
 
   return (
@@ -41,6 +44,12 @@ const Sidebar = memo(() => {
       <nav className="flex flex-col gap-1 flex-1">
         {NAV_LINKS.map(({ to, icon: Icon, label }) => {
           const active = location.pathname === to;
+
+          // 🎯 decide badge
+          let badge = 0;
+          if (to === "/chats") badge = totalUnread;
+          if (to === "/notifications") badge = unreadCount;
+
           return (
             <Link
               key={to}
@@ -50,7 +59,18 @@ const Sidebar = memo(() => {
                 ${active ? "bg-blue-50 text-blue-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}
               `}
             >
-              <Icon size={18} strokeWidth={active ? 2.5 : 1.8} />
+              <div className="relative">
+                <Icon size={18} strokeWidth={active ? 2.5 : 1.8} />
+
+                {badge > 0 && (
+                  <span className="absolute -top-1 -right-2 min-w-[16px] h-[16px] px-0.5
+                    rounded-full bg-red-500 text-white text-[9px] font-bold
+                    flex items-center justify-center leading-none">
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                )}
+              </div>
+
               {label}
             </Link>
           );

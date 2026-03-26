@@ -56,8 +56,9 @@ postCount:{
 },
 college:{
   type:String,
-  default:""
-}
+  default:"",
+},
+pushSubscription: { type: Object, default: null }
 
 }, { timestamps: true });
 

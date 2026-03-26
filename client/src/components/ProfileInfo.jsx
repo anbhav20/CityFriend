@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import FollowButton from "./FollowButton";
 import ProfileStats from "./ProfileStats";
+import { FiCamera } from "react-icons/fi";
 
 const ProfileInfo = ({
   user,
@@ -32,14 +33,28 @@ const ProfileInfo = ({
 
       <div className="flex mt-2 gap-2 sm:gap-12">
 
-        <div className="">
-          <img
-            src={user.profilePic || "/default-avatar.png"}
-            alt="profile"
-            onError={(e) => { e.target.onerror = null; e.target.src = "/default-avatar.png"; }} // ✅ fix 2: broken imagekit URL crashed img
-            className="h-16 w-16 sm:h-40 sm:w-40 rounded-full object-cover"
-          />
-        </div>
+        <div
+  className={`relative ${isOwnProfile ? "cursor-pointer group" : ""}`}
+  onClick={() => {
+    if (isOwnProfile) navigate("/edit-profile");
+  }}
+>
+  <img
+    src={user.profilePic || "/default-avatar.png"}
+    alt="profile"
+    onError={(e) => {
+      e.target.onerror = null;
+      e.target.src = "/default-avatar.png";
+    }}
+    className="h-16 w-16 sm:h-40 sm:w-40 rounded-full object-cover"
+  />
+
+  {isOwnProfile && (
+    <div className="absolute inset-0 rounded-full bg-black/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+      <FiCamera size={20} className="text-white" />
+    </div>
+  )}
+</div>
 
         <div className="flex-1 min-w-0"> {/* ✅ fix 3: min-w-0 prevents long username breaking flex layout */}
           <div className="flex flex-col gap-2 lg:mt-2">

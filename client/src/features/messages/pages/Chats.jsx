@@ -109,6 +109,7 @@ function TypingBubble() {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 const Chats = () => {
+
   const [searchParams] = useSearchParams();
   const userIdFromURL   = searchParams.get("userId");
   const usernameFromURL = searchParams.get("username");
@@ -139,6 +140,12 @@ const Chats = () => {
   const inputRef      = useRef(null);
   const typingTimer   = useRef(null);
   const activeChatRef = useRef(activeChat);
+
+    const openProfile = () => {
+  if (!activePeer || !activePeer.username) return;
+  navigate(`/${activePeer.username}`);
+};
+
   useEffect(() => { activeChatRef.current = activeChat; }, [activeChat]);
 
   // ── Socket setup ────────────────────────────────────────────────────────
@@ -457,7 +464,7 @@ const Chats = () => {
 
                   <Avatar user={activePeer} size={44} online={isPeerOnline} />
 
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-0" onClick={openProfile} style={{ cursor: "pointer" }}>
                     <p className="text-sm font-bold text-gray-900 leading-tight">
                       {activePeer?.username ?? "Unknown"}
                     </p>

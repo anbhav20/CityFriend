@@ -16,15 +16,15 @@ const {
 const upload    = multer({ storage: multer.memoryStorage() });
 const UserRoute = express.Router();
 
-// ✅ CRITICAL: specific/static routes MUST come before /:param wildcards
+// CRITICAL: specific/static routes MUST come before /:param wildcards
 // otherwise Express matches "city", "check-username", "edit-profile" as usernames
 
 UserRoute.get('/users',                    authenticate, allusers);
-UserRoute.get('/users/city',               authenticate, getUsersByCity);       // ✅ was after /:username — broken
-UserRoute.get('/users/check-username/:username', authenticate, checkUsername);  // ✅ moved under /users/ prefix
+UserRoute.get('/users/city',               authenticate, getUsersByCity);       // was after /:username — broken
+UserRoute.get('/users/check-username/:username', authenticate, checkUsername);  // moved under /users/ prefix
 UserRoute.patch('/users/edit-profile',     authenticate, upload.single("profilePic"), editProfile); // ✅ was clashing with /:username
 
-// ✅ wildcard param routes always last
+//  wildcard param routes always last
 UserRoute.get('/:username',                authenticate, getUserProfile);
 UserRoute.post('/:id/follow',              authenticate, followUser);
 UserRoute.delete('/:id/unfollow',          authenticate, unfollowUser);

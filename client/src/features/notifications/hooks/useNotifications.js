@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useSocket } from "../../messages/hooks/useSocket"; 
-import { api } from "../../api"; 
+import { useSocket } from "../../messages/hooks/useSocket"; // adjust path if needed
+import { api } from "../../api";
 
 export function useNotifications() {
   const socket = useSocket();
@@ -18,7 +18,9 @@ export function useNotifications() {
     fetchingRef.current = true;
     try {
       const { data } = await api.get(`/notifications?page=${pageNum}&limit=10`);
-      setNotifications((prev) => replace ? data.notifications : [...prev, ...data.notifications]);
+      setNotifications((prev) =>
+        replace ? data.notifications : [...prev, ...data.notifications]
+      );
       setUnreadCount(data.unread);
       setHasMore(data.hasMore);
       setPage(pageNum);
@@ -30,7 +32,9 @@ export function useNotifications() {
     }
   }, []);
 
-  useEffect(() => { fetchNotifications(1, true); }, [fetchNotifications]);
+  useEffect(() => {
+    fetchNotifications(1, true);
+  }, [fetchNotifications]);
 
   // ── Socket ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -38,10 +42,11 @@ export function useNotifications() {
 
     const handleNew = (notification) => {
       setNotifications((prev) => {
-        const exists = prev.findIndex((n) => n._id === notification._id);
-        if (exists !== -1) {
+        const existingIndex = prev.findIndex((n) => n._id === notification._id);
+        if (existingIndex !== -1) {
+          // Update in place (e.g. idempotent like/follow upsert)
           const updated = [...prev];
-          updated[exists] = notification;
+          updated[existingIndex] = notification;
           return updated;
         }
         return [notification, ...prev];
@@ -50,10 +55,11 @@ export function useNotifications() {
 
     const handleCount = (count) => setUnreadCount(count);
 
-    socket.on("new_notification", handleNew);
+    socket.on("new_notification",   handleNew);
     socket.on("notification_count", handleCount);
+
     return () => {
-      socket.off("new_notification", handleNew);
+      socket.off("new_notification",   handleNew);
       socket.off("notification_count", handleCount);
     };
   }, [socket]);
@@ -81,7 +87,7 @@ export function useNotifications() {
     await api.delete(`/notifications/${id}`);
     setNotifications((prev) => {
       const removed = prev.find((n) => n._id === id);
-      if (!removed?.read) setUnreadCount((c) => Math.max(0, c - 1));
+      if (removed && !removed.read) setUnreadCount((c) => Math.max(0, c - 1));
       return prev.filter((n) => n._id !== id);
     });
   }, []);
@@ -92,5 +98,15 @@ export function useNotifications() {
     setUnreadCount(0);
   }, []);
 
-  return { notifications, unreadCount, loading, hasMore, fetchMore, markAllRead, markOneRead, deleteOne, clearAll };
+  return {
+    notifications,
+    unreadCount,
+    loading,
+    hasMore,
+    fetchMore,
+    markAllRead,
+    markOneRead,
+    deleteOne,
+    clearAll,
+  };
 }

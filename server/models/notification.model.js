@@ -2,8 +2,16 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema(
   {
-    recipient: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
-    sender:    { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    recipient: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true
+    },
     type: {
       type: String,
       enum: [
@@ -18,24 +26,32 @@ const notificationSchema = new mongoose.Schema(
       ],
       required: true,
     },
-    // Optional references — populate only what's relevant per type
     post:    { type: mongoose.Schema.Types.ObjectId, ref: "Post",    default: null },
     comment: { type: mongoose.Schema.Types.ObjectId, ref: "Comment", default: null },
     chat:    { type: mongoose.Schema.Types.ObjectId, ref: "Chat",    default: null },
-    // Short text snippet shown in the notification (e.g. comment body preview)
     text:    { type: String, default: "" },
-    read:    { type: Boolean, default: false, index: true },
+    read:    { type: Boolean, default: false },
   },
   { timestamps: true }
 );
 
-// Compound index for fast unread-count queries per user
+// ✅ PRIMARY index — speeds up getNotifications (the query causing timeouts)
+// covers: find({ recipient }) + sort({ createdAt: -1 })
+notificationSchema.index({ recipient: 1, createdAt: -1 });
+
+// ✅ Speeds up unread count queries: countDocuments({ recipient, read: false })
 notificationSchema.index({ recipient: 1, read: 1 });
 
-// Never store duplicate "follow" notifications from the same sender to the same recipient
+// ✅ Prevents duplicate idempotent notifications (follow, like, etc.)
 notificationSchema.index(
   { recipient: 1, sender: 1, type: 1, post: 1 },
-  { unique: true, sparse: true, partialFilterExpression: { type: { $in: ["follow", "like_post", "like_comment", "profile_visit"] } } }
+  {
+    unique: true,
+    sparse: true,
+    partialFilterExpression: {
+      type: { $in: ["follow", "like_post", "like_comment", "profile_visit"] }
+    }
+  }
 );
 
 module.exports = mongoose.model("Notification", notificationSchema);

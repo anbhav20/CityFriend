@@ -3,18 +3,16 @@ import { toast } from "react-toastify";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api",
-  // 🍪 Cookie approach — commented out (blocked by browser cross-site policy)
-  // withCredentials: true,
-  timeout: 10000,
+  timeout: 15000, //  increased from 10s to 15s
 });
 
-// ✅ these routes never show toasts or trigger redirects
-const SILENT_ROUTES = ["/auth/me"];
+// Silent routes — no toast, no redirect ever
+const SILENT_ROUTES = ["/auth/me", "/notifications"]; //  added /notifications
 
-// ✅ these routes show error toasts but never redirect to /login
+// Auth routes — show error toast but never redirect
 const AUTH_ROUTES = ["/auth/login", "/auth/signup"];
 
-// ✅ Attach token from localStorage to every request
+//  Attach token from localStorage to every request
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
@@ -25,7 +23,7 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(
   (response) => {
-    // ✅ Save token to localStorage on login/signup
+    // Save token to localStorage on login/signup
     if (response.data?.token) {
       localStorage.setItem("token", response.data.token);
     }
@@ -41,54 +39,47 @@ api.interceptors.response.use(
   (error) => {
     const url = error.config?.url ?? "";
 
-    // ✅ completely silent — no toast, no redirect
+    // Completely silent routes — no toast, no redirect
     if (SILENT_ROUTES.some((route) => url.includes(route))) {
       return Promise.reject(error);
     }
 
+    //  Timeout — single clean message, no spam
     if (error.code === "ECONNABORTED") {
-      toast.error("Request timed out. Please try again.");
+      toast.error("Request timed out. Please try again.", { toastId: "timeout" });
       return Promise.reject(error);
     }
 
     if (!error.response) {
-      toast.error("Network error. Check your connection.");
+      toast.error("Network error. Check your connection.", { toastId: "network" });
       return Promise.reject(error);
     }
 
-    const status  = error.response.status;
-    const message = error.response?.data?.message || "Something went wrong.";
+    const status      = error.response.status;
+    const message     = error.response?.data?.message || "Something went wrong.";
     const isAuthRoute = AUTH_ROUTES.some((route) => url.includes(route));
 
     if (status === 401) {
       if (isAuthRoute) {
-        // ✅ login/signup 401 — show the error message but DO NOT redirect
         toast.error(message);
       } else {
-        // ✅ other 401s — clear token and redirect if not already on auth pages
         const authPages = ["/login", "/signup", "/"];
         if (!authPages.includes(window.location.pathname)) {
-          localStorage.removeItem("token"); // 👈 clear invalid token
-          toast.error("Session expired. Please log in again.");
+          localStorage.removeItem("token");
+          toast.error("Session expired. Please log in again.", { toastId: "session" });
           window.location.href = "/login";
         }
       }
     } else if (status === 403) {
       toast.error("You don't have permission to do that.");
     } else if (status === 404) {
-      // ❌ notifications pe UI error nahi chahiye
-      if (url.includes("/notifications")) {
-        console.error("404 (notifications):", message);
-        return Promise.reject(error);
-      }
-
       if (!isAuthRoute) {
         toast.error("Resource not found.");
       } else {
         toast.error(message);
       }
     } else if (status >= 500) {
-      toast.error("Server error. Please try again later.");
+      toast.error("Server error. Please try again later.", { toastId: "server" });
     } else {
       toast.error(message);
     }

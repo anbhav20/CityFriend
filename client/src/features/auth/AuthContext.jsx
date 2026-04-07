@@ -1,6 +1,6 @@
-import { createContext, useCallback, useEffect, useState } from "react"; // ✅ removed useContext
+import { createContext, useCallback, useEffect, useState } from "react";
 import { handleLogin, handleLogout, handleRegister, handleMe } from "./services/auth.api";
-
+import { disconnectSocket } from "../messages/hooks/useSocket"; //  so we can disconnect on logout
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const refreshUser = useCallback(async () => {
+     disconnectSocket();
     const data = await handleMe();
     if (data?.user) setUser(data.user);
     return data?.user ?? null;

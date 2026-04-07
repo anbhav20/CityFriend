@@ -14,5 +14,7 @@ const chatsSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-// ✅ Fix: export was missing / misplaced in original code
+// ✅ Speeds up getChats: find({ participants: userId }) + sort({ updatedAt: -1 })
+chatsSchema.index({ participants: 1, updatedAt: -1 });
+
 module.exports = mongoose.models.Chat || mongoose.model("Chat", chatsSchema);

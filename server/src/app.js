@@ -17,7 +17,7 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
 ].filter(Boolean);
 
-console.log("✅ Allowed origins:", allowedOrigins);
+console.log(" Allowed origins:", allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -33,12 +33,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use('/api/auth',          authRoutes);
-app.use('/api',               UserRoute);
 app.use('/api/posts',         postRoute);
 app.use('/api/message',       sendMessageRoute);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/likes',         likeRoutes);
 app.use('/api/comments',      commentRoutes);
+app.use('/api',               UserRoute);
 
 app.get('/', (req, res) => res.send("API is running..."));
 

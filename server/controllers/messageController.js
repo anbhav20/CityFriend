@@ -14,19 +14,21 @@ exports.sendMessage = async (req, res) => {
 
     // Find or create chat between the two participants
     let chat = await Chat.findOne({
-      participants: { $all: [senderId, receiverId] }
+      participants: { $all: [senderId, receiverId] },
     });
 
     if (!chat) {
       chat = await Chat.create({
-        participants: [senderId, receiverId]
+        participants: [senderId, receiverId],
       });
     }
 
+    // ✅ FIX: Save receiverId so unread-count queries work correctly
     const message = await Message.create({
       chatId: chat._id,
       senderId,
-      text: text.trim()
+      receiverId, // ← was missing before; all count queries depend on this
+      text: text.trim(),
     });
 
     // Update lastMessage reference on the chat
@@ -52,7 +54,7 @@ exports.getChats = async (req, res) => {
       .populate("participants", "username profilePic")
       .populate({
         path: "lastMessage",
-        populate: { path: "senderId", select: "username" }
+        populate: { path: "senderId", select: "username" },
       })
       .sort({ updatedAt: -1 });
 
@@ -68,11 +70,10 @@ exports.getMessages = async (req, res) => {
   try {
     const { chatId } = req.params;
     const userId = req.user.id;
-
     // Verify the user is a participant in this chat
     const chat = await Chat.findOne({
       _id: chatId,
-      participants: userId
+      participants: userId,
     });
 
     if (!chat) {

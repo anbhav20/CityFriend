@@ -3,10 +3,10 @@ const redis = require("../config/cache");
 
 exports.authenticate = async (req, res, next) => {
 
-    // 🍪 Cookie approach — commented out (blocked by browser cross-site policy)
+    //  Cookie approach — commented out (blocked by browser cross-site policy)
     // const token = req.cookies.token;
 
-    // ✅ Token now read from Authorization header
+    //  Token now read from Authorization header
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {

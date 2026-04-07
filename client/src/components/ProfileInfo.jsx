@@ -78,9 +78,9 @@ const ProfileInfo = ({
             {/* ✅ college shown only when it exists — was always rendering even if undefined */}
             {user.bio && (
               <div className="hidden sm:block max-w-sm">
-                <p className="text-sm leading-relaxed">{user.bio}</p>
+                <p className="text-sm mb-1 leading-relaxed">{user.bio}</p>
                 {user.college && (
-                  <p className="text-sm leading-relaxed">{user.college}</p>
+                  <span className="text-xs lg:text-sm bg-gray-200 py-1 px-2 rounded-2xl leading-relaxed">{user.college}</span>
                 )}
               </div>
             )}
@@ -92,9 +92,9 @@ const ProfileInfo = ({
       {/* ✅ same college guard on mobile */}
       {user.bio && (
         <div className="sm:hidden mt-3 max-w-sm">
-          <p className="text-sm leading-relaxed">{user.bio}</p>
+          <p className="text-sm mb-1 leading-relaxed">{user.bio}</p>
           {user.college && (
-            <p className="text-sm leading-relaxed">{user.college}</p>
+            <span className="text-xs  lg:text-sm bg-gray-200 py-1 px-2 rounded-2xl leading-relaxed">{user.college}</span>
           )}
         </div>
       )}
@@ -104,19 +104,19 @@ const ProfileInfo = ({
           <>
             <button
               onClick={() => navigate("/edit-profile")}
-              className="w-full whitespace-nowrap flex-1 px-4 py-1 sm:py-1.5 rounded-lg text-xs lg:text-sm font-semibold bg-gray-200 hover:bg-gray-300 transition"
+              className="w-full whitespace-nowrap flex-1 px-4 py-2 sm:py-1.5 rounded-lg text-xs lg:text-sm font-semibold bg-gray-200 hover:bg-gray-300 transition"
             >
               Edit profile
             </button>
             <button
-              onClick={handleShare} // ✅ fixed
-              className="w-full whitespace-nowrap flex-1 px-4 py-1 rounded-lg text-xs lg:text-sm font-semibold bg-gray-200 hover:bg-gray-300 transition"
+              onClick={handleShare} // fixed
+              className="w-full whitespace-nowrap flex-1 px-4 py-2 rounded-lg text-xs lg:text-sm font-semibold bg-gray-200 hover:bg-gray-300 transition"
             >
               Share profile
             </button>
           </>
         ) : (
-          <FollowButton // ✅ removed unnecessary <> wrapper
+          <FollowButton // removed unnecessary <> wrapper
             isFollowing={isFollowing}
             onFollow={onFollow}
             onUnfollow={onUnfollow}

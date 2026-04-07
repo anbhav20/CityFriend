@@ -16,7 +16,7 @@ const SETTINGS_GROUPS = [
     title: "Account",
     items: [
       { icon: FiUser,   label: "Edit Profile",       to: "/edit-profile" },
-      { icon: FiLock,   label: "Change Password",     to: "/change-password" },
+      // { icon: FiLock,   label: "Change Password",     to: "/change-password" },
     ],
   },
   {

@@ -10,17 +10,120 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicon/favicon-16x16.png"
+    />
 
     <!-- Apple PWA -->
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="default"
+    />
     <meta name="apple-mobile-web-app-title" content="CityFriend" />
   </head>
+
   <body>
+    <!-- Initial Loader -->
+    <div id="initial-loader">
+      <div class="loader"></div>
+
+      <h2 class="brand">
+        City <span>Friend</span>
+      </h2>
+    </div>
+
+    <!-- React Root -->
     <div id="root"></div>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #ffffff;
+        font-family: Arial, sans-serif;
+      }
+
+      #initial-loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: white;
+        z-index: 999999;
+        padding: 16px;
+      }
+
+      .brand {
+        margin-top: 10px;
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .brand span {
+        color: #2563eb;
+      }
+
+      .loader {
+        width: 34px;
+        height: 34px;
+        border: 3px solid #e5e7eb;
+        border-top-color: #111827;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Small Mobile Screens */
+      @media (max-width: 480px) {
+        .brand {
+          margin-top: 8px;
+          font-size: 17px;
+        }
+
+        .loader {
+          width: 28px;
+          height: 28px;
+          border-width: 2.5px;
+        }
+      }
+
+      /* Extra Small Screens */
+      @media (max-width: 320px) {
+        .brand {
+          font-size: 15px;
+        }
+
+        .loader {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    </style>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

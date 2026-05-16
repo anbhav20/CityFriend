@@ -1,4 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -30,6 +31,17 @@ import NotFound      from "./pages/NotFound";
 
 const App = () => {
   usePushNotification(); 
+  useEffect(() => {
+  const loader = document.getElementById("initial-loader");
+
+  if (loader) {
+    loader.style.opacity = "0";
+
+    setTimeout(() => {
+      loader.remove();
+    }, 300);
+  }
+}, []);
   return (
     <>
      <ToastContainer

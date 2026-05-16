@@ -7,16 +7,19 @@ import { UserProvider } from './features/user/UserContext.jsx'
 import { PostProvider } from './features/post/PostContext.jsx'
 import { MessageProvider } from './features/messages/MessageContext.jsx'
 
-createRoot(document.getElementById('root')).render(
+const root = createRoot(document.getElementById('root'))
+
+root.render(
   <AuthProvider>
     <UserProvider>
       <PostProvider>
         <MessageProvider>
           <StrictMode>
-           <App />
+            <App />
           </StrictMode>
         </MessageProvider>
       </PostProvider>
     </UserProvider>
   </AuthProvider>
 )
+

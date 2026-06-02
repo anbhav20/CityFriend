@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { FcGoogle } from "react-icons/fc";
 import Navleft from "../../../components/Navleft";
 import useForm from "../../../hooks/useForm";
 import Input from "../../../components/Input";
@@ -12,12 +13,13 @@ const Signup = () => {
     username: "",
     email: "",
     password: "",
-    confirmpassword: "",  // ✅ city removed
+    confirmpassword: "",
   });
 
   const navigate = useNavigate();
-  const { Register } = useAuth();                          // ✅ removed loading from context
-  const [isSubmitting, setIsSubmitting] = useState(false); // ✅ local only
+  const { Register, GoogleLogin } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,12 +31,24 @@ const Signup = () => {
 
     setIsSubmitting(true);
     try {
-      await Register(form.username, form.email, form.password); // ✅ city removed from call
+      await Register(form.username, form.email, form.password);
       navigate("/home");
     } catch {
-      // interceptor toast already shown
+      // API interceptor already shows the toast.
     } finally {
-      setIsSubmitting(false); // ✅ always resets even if register fails
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleSubmit = async () => {
+    setIsGoogleSubmitting(true);
+    try {
+      await GoogleLogin();
+      navigate("/home");
+    } catch {
+      // API/Firebase error is surfaced by the caller or interceptor.
+    } finally {
+      setIsGoogleSubmitting(false);
     }
   };
 
@@ -45,9 +59,8 @@ const Signup = () => {
       </div>
 
       <div className="flex-1 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-sm">
-
-          <div className="bg-white rounded-3xl border border-gray-100 shadow-sm px-7 py-9">
+        <div className="w-full max-w-md">
+          <div className="bg-white/95 rounded-3xl border border-blue-100 shadow-xl shadow-blue-100/40 px-6 sm:px-8 py-8">
             <div className="mb-7">
               <Navleft />
             </div>
@@ -57,8 +70,26 @@ const Signup = () => {
                 Create account
               </h1>
               <p className="text-sm text-gray-400 mt-1">
-                Join CityFriend — it&apos;s free
+                Join CityFriend - it&apos;s free
               </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleGoogleSubmit}
+              disabled={isGoogleSubmitting || isSubmitting}
+              className="w-full h-11 rounded-xl border border-gray-200 bg-white text-sm font-semibold text-gray-700
+                flex items-center justify-center gap-3 hover:bg-gray-50 hover:border-blue-200 transition
+                disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <FcGoogle size={20} />
+              {isGoogleSubmitting ? "Connecting..." : "Continue with Google"}
+            </button>
+
+            <div className="flex items-center gap-3 my-5">
+              <div className="flex-1 h-px bg-gray-100" />
+              <span className="text-xs text-gray-300">or</span>
+              <div className="flex-1 h-px bg-gray-100" />
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
@@ -97,23 +128,17 @@ const Signup = () => {
 
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isGoogleSubmitting}
                 className="mt-1 w-full py-2.5 rounded-xl text-sm font-semibold text-white
                   bg-gradient-to-r from-blue-600 to-sky-400
                   hover:scale-[1.02] active:scale-[0.98] transition shadow-sm shadow-blue-100
                   disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                {isSubmitting ? "Please wait…" : "Create Account"}
+                {isSubmitting ? "Please wait..." : "Create Account"}
               </button>
             </form>
 
-            <div className="flex items-center gap-3 my-5">
-              <div className="flex-1 h-px bg-gray-100" />
-              <span className="text-xs text-gray-300">or</span>
-              <div className="flex-1 h-px bg-gray-100" />
-            </div>
-
-            <p className="text-sm text-center text-gray-500">
+            <p className="text-sm text-center text-gray-500 mt-6">
               Already have an account?{" "}
               <Link to="/login" className="text-blue-500 font-semibold hover:text-blue-600 transition">
                 Login
@@ -127,7 +152,6 @@ const Signup = () => {
             &amp;{" "}
             <Link to="/privacy-policy" className="underline hover:text-gray-600 transition">Privacy Policy</Link>
           </p>
-
         </div>
       </div>
     </div>

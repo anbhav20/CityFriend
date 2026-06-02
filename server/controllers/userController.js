@@ -25,7 +25,12 @@ exports.getUserProfile = async (req, res) => {
       isFollowing = !!(await Follow.exists({ follower: req.user.id, following: user._id }));
     }
 
-    // Fire profile_visit notification (non-fatal, skip if visiting own profile)
+    // ✅ Real-time counts from Follow collection (avoids stale counts from deleted accounts)
+    const [followersCount, followingCount] = await Promise.all([
+      Follow.countDocuments({ following: user._id }),
+      Follow.countDocuments({ follower: user._id }),
+    ]);
+
     if (req.user?.id && req.user.id.toString() !== user._id.toString()) {
       createNotification({
         recipient: user._id,
@@ -34,7 +39,10 @@ exports.getUserProfile = async (req, res) => {
       }).catch(() => {});
     }
 
-    res.status(200).json({ user, isFollowing });
+    res.status(200).json({
+      user: { ...user.toObject(), followersCount, followingCount },
+      isFollowing,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
@@ -68,12 +76,11 @@ exports.followUser = async (req, res) => {
     await UserModel.findByIdAndUpdate(followingId, { $inc: { followersCount:  1 } });
     await UserModel.findByIdAndUpdate(followerId,  { $inc: { followingCount:  1 } });
 
-    // ── Notify the followed user ──────────────────────────────────────
     await createNotification({
       recipient: followingId,
       sender:    followerId,
       type:      "follow",
-    }).catch(() => {}); // non-fatal
+    }).catch(() => {});
 
     res.status(201).json({ message: "followed" });
   } catch (error) {
@@ -95,7 +102,6 @@ exports.unfollowUser = async (req, res) => {
     await UserModel.findByIdAndUpdate(followingId, { $inc: { followersCount: -1 } });
     await UserModel.findByIdAndUpdate(followerId,  { $inc: { followingCount: -1 } });
 
-    // ── Notify the unfollowed user ────────────────────────────────────
     await createNotification({
       recipient: followingId,
       sender:    followerId,
@@ -113,7 +119,7 @@ exports.getFollowers = async (req, res) => {
   const userId = req.params.id;
   try {
     const followers = await Follow.find({ following: userId })
-      .populate("follower", "username profilePic")
+      .populate("follower", "username profilePic name")
       .select("follower");
     res.status(200).json({ followers });
   } catch (error) {
@@ -125,7 +131,7 @@ exports.getFollowings = async (req, res) => {
   const userId = req.params.id;
   try {
     const followings = await Follow.find({ follower: userId })
-      .populate("following", "username profilePic")
+      .populate("following", "username profilePic name")
       .select("following");
     res.status(200).json({ followings });
   } catch (error) {

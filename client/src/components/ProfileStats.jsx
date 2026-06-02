@@ -1,4 +1,4 @@
-const ProfileStats = ({ postCount, followersCount, followingCount }) => {
+const ProfileStats = ({ postCount, followersCount, followingCount, onFollowersClick, onFollowingClick }) => {
   return (
     <>
       {/* Desktop */}
@@ -7,30 +7,42 @@ const ProfileStats = ({ postCount, followersCount, followingCount }) => {
           <span className="font-semibold text-gray-800">{postCount}</span>
           <span className="text-gray-500 ml-1">posts</span>
         </div>
-        <div>
+        <button
+          onClick={onFollowersClick}
+          className="hover:opacity-70 transition text-left"
+        >
           <span className="font-semibold text-gray-800">{followersCount}</span>
           <span className="text-gray-500 ml-1">followers</span>
-        </div>
-        <div>
+        </button>
+        <button
+          onClick={onFollowingClick}
+          className="hover:opacity-70 transition text-left"
+        >
           <span className="font-semibold text-gray-800">{followingCount}</span>
           <span className="text-gray-500 ml-1">following</span>
-        </div>
+        </button>
       </div>
 
       {/* Mobile */}
-      <div className="flex sm:hidden justify-around  ">
+      <div className="flex sm:hidden justify-around">
         <div>
           <p className="text-base font-semibold text-gray-800">{postCount}</p>
           <p className="text-xs text-gray-500">Posts</p>
         </div>
-        <div>
+        <button
+          onClick={onFollowersClick}
+          className="text-center hover:opacity-70 transition"
+        >
           <p className="text-base font-semibold text-gray-800">{followersCount}</p>
           <p className="text-xs text-gray-500">Followers</p>
-        </div>
-        <div>
+        </button>
+        <button
+          onClick={onFollowingClick}
+          className="text-center hover:opacity-70 transition"
+        >
           <p className="text-base font-semibold text-gray-800">{followingCount}</p>
           <p className="text-xs text-gray-500">Following</p>
-        </div>
+        </button>
       </div>
     </>
   );

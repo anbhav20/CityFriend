@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useState } from "react";
-import { handleLogin, handleLogout, handleRegister, handleMe } from "./services/auth.api";
+import { handleLogin, handleLogout, handleRegister, handleMe, handleGoogleLogin } from "./services/auth.api";
 import { disconnectSocket } from "../messages/hooks/useSocket"; //  so we can disconnect on logout
 export const AuthContext = createContext(null);
 
@@ -39,6 +39,12 @@ export const AuthProvider = ({ children }) => {
     return data;
   }, []);
 
+  const GoogleLogin = useCallback(async () => {
+    const data = await handleGoogleLogin();
+    if (data?.user) setUser(data.user);
+    return data;
+  }, []);
+
   const refreshUser = useCallback(async () => {
      disconnectSocket();
     const data = await handleMe();
@@ -49,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   if (!authReady) return null;
 
   return (
-    <AuthContext.Provider value={{ user, setUser, Login, Register, LogOut, refreshUser }}>
+    <AuthContext.Provider value={{ user, setUser, Login, Register, LogOut, GoogleLogin, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );

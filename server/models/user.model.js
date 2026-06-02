@@ -24,9 +24,27 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-  required: true,
   select:false
   },
+ refreshToken: {
+  type: String,
+  select: false,
+  default: null
+ },
+ firebaseUid: {
+  type: String,
+  unique: true,
+  sparse: true
+ },
+ authProvider: {
+  type: String,
+  enum: ["local", "google.com", "github.com", "unknown"],
+  default: "local"
+ },
+ isVerified: {
+  type: Boolean,
+  default: false
+ },
  city: {
       type: String,
       default: 'Unknown'  // ← remove required, add default

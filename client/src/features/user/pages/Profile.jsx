@@ -12,40 +12,40 @@ import { useUser } from "../hooks/useUser";
 const Profile = () => {
   const { username } = useParams();
   const { user: loggedInUser } = useAuth();
-  const { userProfile, follow, unFollow } = useUser(); // ✅ removed loading from context
+  const { userProfile, follow, unFollow } = useUser();
 
-  const [profileUser,    setProfileUser]    = useState(null);
-  const [activeTab,      setActiveTab]      = useState("posts");
-  const [isFollowing,    setIsFollowing]    = useState(false);
-  const [followersCount, setFollowersCount] = useState(0);
-  const [error,          setError]          = useState(null);
-  const [isFetching,     setIsFetching]     = useState(false); // ✅ local fetch state
+  const [profileUser,     setProfileUser]     = useState(null);
+  const [activeTab,       setActiveTab]       = useState("posts");
+  const [isFollowing,     setIsFollowing]     = useState(false);
+  const [followersCount,  setFollowersCount]  = useState(0);
+  const [followingCount,  setFollowingCount]  = useState(0); // ← alag state
+  const [error,           setError]           = useState(null);
+  const [isFetching,      setIsFetching]      = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     const fetchProfile = async () => {
-      setIsFetching(true);   // ✅ set BEFORE clearing — skeleton shows immediately
+      setIsFetching(true);
       setError(null);
-      // ✅ don't setProfileUser(null) here — keep old profile visible while loading
-      //    avoids the flash: skeleton → "not found" → profile
       try {
         const res = await userProfile(username);
         if (cancelled) return;
         const userData = res?.user ?? res;
         setProfileUser(userData);
         setFollowersCount(userData?.followersCount ?? 0);
+        setFollowingCount(userData?.followingCount ?? 0); // ← initialize
         setIsFollowing(res?.isFollowing ?? false);
       } catch {
         if (!cancelled) setError("Profile not found.");
       } finally {
-        if (!cancelled) setIsFetching(false); // ✅ only stop after data is in state
+        if (!cancelled) setIsFetching(false);
       }
     };
 
     fetchProfile();
     return () => { cancelled = true; };
-  }, [username]); // ✅ removed userProfile from deps — stable context fn, caused re-fetches
+  }, [username]);
 
   const isOwnProfile = loggedInUser?.username === username;
 
@@ -55,9 +55,7 @@ const Profile = () => {
       await follow(profileUser._id);
       setIsFollowing(true);
       setFollowersCount((prev) => prev + 1);
-    } catch {
-      // interceptor toast already shown
-    }
+    } catch {}
   };
 
   const handleUnfollow = async () => {
@@ -66,21 +64,13 @@ const Profile = () => {
       await unFollow(profileUser._id);
       setIsFollowing(false);
       setFollowersCount((prev) => Math.max(0, prev - 1));
-    } catch {
-      // interceptor toast already shown
-    }
+    } catch {}
   };
 
-  // ——— Loading state — show skeleton ———
-  if (isFetching) { // ✅ only isFetching — not "loading || !profileUser"
-    return (
-      <MainLayout>
-        <UserProfile className="mt-10" />
-      </MainLayout>
-    );
+  if (isFetching) {
+    return <MainLayout><UserProfile className="mt-10" /></MainLayout>;
   }
 
-  // ——— Error state ———
   if (error) {
     return (
       <MainLayout>
@@ -91,44 +81,35 @@ const Profile = () => {
     );
   }
 
-  // ——— Not found (fetch done but no data) ———
   if (!profileUser) return null;
 
   const posts = profileUser?.posts ?? [];
 
   return (
     <MainLayout>
-      <main className="min-h-screen ">
-
-        <TopBar
-          username={profileUser.username}
-          isOwnProfile={isOwnProfile}
-        />
-
+      <main className="min-h-screen">
+        <TopBar username={profileUser.username} isOwnProfile={isOwnProfile} />
         <div className="w-full px-2 sm:px-2">
           <ProfileInfo
             user={profileUser}
             isOwnProfile={isOwnProfile}
             isFollowing={isFollowing}
             followersCount={followersCount}
+            followingCount={followingCount}
+            setFollowersCount={setFollowersCount}
+            setFollowingCount={setFollowingCount}
             onFollow={handleFollow}
             onUnfollow={handleUnfollow}
           />
-
           <ProfileTabs
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             isOwnProfile={isOwnProfile}
           />
-
           <div className="py-6 pb-10">
-            <PostsGrid
-              posts={posts}
-              isOwnProfile={isOwnProfile}
-            />
+            <PostsGrid posts={posts} isOwnProfile={isOwnProfile} />
           </div>
         </div>
-
       </main>
     </MainLayout>
   );

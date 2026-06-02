@@ -151,7 +151,7 @@ const Chats = () => {
   // ── Socket setup ────────────────────────────────────────────────────────
   useEffect(() => {
     if (!me) return;
-    const socket = io(SOCKET_URL, { auth: { token: localStorage.getItem("token") } });
+    const socket = io(SOCKET_URL, { withCredentials: true });
     socketRef.current = socket;
 
     socket.on("connect",      () => socket.emit("join", me._id));

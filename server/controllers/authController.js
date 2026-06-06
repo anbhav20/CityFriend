@@ -70,6 +70,7 @@ const getClientCity = async (req) => {
     || req.headers["x-real-ip"]
     || req.socket.remoteAddress;
 
+    console.log("Detected IP:", ip);
   const isLocalIP = ["::1", "127.0.0.1", "::ffff:127.0.0.1"].includes(ip);
   if (isLocalIP) return "Unknown";
 

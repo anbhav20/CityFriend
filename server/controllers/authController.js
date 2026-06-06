@@ -70,7 +70,6 @@ const getClientCity = async (req) => {
     || req.headers["x-real-ip"]
     || req.socket.remoteAddress;
 
-    console.log("Detected IP:", ip);
   const isLocalIP = ["::1", "127.0.0.1", "::ffff:127.0.0.1"].includes(ip);
   if (isLocalIP) return "Unknown";
 
@@ -203,12 +202,14 @@ exports.oauthLogin = async (req, res) => {
     const provider = decoded.firebase?.sign_in_provider || "unknown";
     let user = await UserModel.findOne({ $or: [{ email }, { firebaseUid: decoded.uid }] });
 
+    const city = await getClientCity(req);
     if (!user) {
       const username = await makeUniqueUsername(decoded.name || email.split("@")[0]);
       user = await UserModel.create({
         username,
         name: decoded.name || "",
         email,
+        city,
         profilePic: decoded.picture || undefined,
         firebaseUid: decoded.uid,
         authProvider: provider,

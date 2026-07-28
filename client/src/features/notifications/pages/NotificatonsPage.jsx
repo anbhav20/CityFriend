@@ -86,7 +86,7 @@ const NotificationsPage = () => {
         {/* ── Empty state ── */}
         {!loading && notifications.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
-            <p className="text-5xl">🔔</p>
+          
             <p className="font-semibold text-gray-900">No notifications</p>
             <p className="text-sm text-gray-400">You're all caught up!</p>
           </div>

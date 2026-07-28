@@ -176,7 +176,7 @@ const Home = () => {
             Array.from({ length: 3 }, (_, i) => <SkeletonPost key={i} />) // ✅ no repeated JSX
           ) : posts.length === 0 ? (
             <div className="bg-white/60 rounded-xl shadow-sm py-10 text-center">
-              <p className="text-2xl mb-2">🏙️</p>
+              
               <p className="text-sm font-medium text-gray-700">No posts yet</p>
               <p className="text-xs text-gray-400 mt-1">
                 Be the first to share something in your city.
